@@ -1,0 +1,129 @@
+/* Emberfall Duel — the table, the cards and the screens. Deep green felt, gold
+   trim, warm parchment cards; each element keeps its own colour and glyph so
+   suits are told apart by colour and shape, never by text alone. */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: #0d1f16;
+  color: #f3ead3;
+  font-family: Georgia, 'Times New Roman', serif;
+  overflow-x: hidden;
+}
+#app { min-height: 100vh; }
+#status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+button { font-family: inherit; cursor: pointer; }
+button:disabled { cursor: default; opacity: 0.45; }
+
+/* ---------- screens ---------- */
+.screen { max-width: 1180px; margin: 0 auto; padding: 6px 22px 8px; }
+.title-screen, .end-screen { text-align: center; padding-top: 54px; }
+.title-emblem { font-size: 34px; letter-spacing: 18px; color: #e8b64c; }
+h1 { font-size: 64px; line-height: 0.95; margin: 12px 0 8px; color: #ffd97a; text-shadow: 0 3px 0 #5a3a00, 0 6px 22px rgba(0,0,0,.6); letter-spacing: 4px; }
+.tagline { font-size: 19px; color: #d8cba6; max-width: 640px; margin: 0 auto 22px; }
+.rules { max-width: 680px; margin: 0 auto 26px; text-align: left; background: rgba(255,255,255,.06); border: 1px solid #6b5a2e; border-radius: 12px; padding: 6px 20px; font-size: 15.5px; line-height: 1.5; }
+.rules p { margin: 10px 0; }
+.big-btn {
+  background: linear-gradient(#ffd97a, #e8a83c); color: #3a2503; border: 2px solid #fff0c0;
+  border-radius: 10px; padding: 14px 34px; font-size: 21px; font-weight: bold; letter-spacing: 1px;
+  box-shadow: 0 4px 0 #8a5f10, 0 8px 18px rgba(0,0,0,.45);
+}
+.big-btn:hover:not(:disabled) { filter: brightness(1.07); }
+.big-btn:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 #8a5f10; }
+.best { color: #cbb87e; margin-top: 18px; }
+.final-score { display: flex; gap: 26px; justify-content: center; margin: 8px 0 26px; }
+.final-score div { background: rgba(255,255,255,.07); border: 1px solid #6b5a2e; border-radius: 10px; padding: 12px 22px; }
+.final-score span { display: block; font-size: 13px; color: #cbb87e; text-transform: uppercase; letter-spacing: 1px; }
+.final-score b { font-size: 30px; color: #ffd97a; }
+.end-screen.win h1 { color: #ffe9a8; }
+.end-screen.loss h1 { color: #ff9a8a; }
+
+/* ---------- play table ---------- */
+.play-screen { background: radial-gradient(ellipse at 50% 30%, #17402a 0%, #0d1f16 70%); border: 3px solid #6b5a2e; border-radius: 18px; margin-top: 4px; }
+.topbar { display: flex; justify-content: space-between; align-items: center; font-size: 17px; padding: 2px 4px 10px; border-bottom: 1px solid rgba(255,255,255,.12); }
+.topbar b { color: #ffd97a; }
+.small-btn { background: #243d2c; color: #f3ead3; border: 1px solid #6b5a2e; border-radius: 8px; padding: 6px 12px; font-size: 14px; }
+
+.side { display: flex; align-items: center; gap: 18px; padding: 5px 4px; }
+.portrait { width: 132px; flex: none; text-align: center; background: rgba(0,0,0,.28); border: 2px solid #6b5a2e; border-radius: 12px; padding: 5px 6px; }
+.portrait-glyph { font-size: 26px; }
+.portrait-name { font-size: 18px; font-weight: bold; color: #ffd97a; }
+.portrait-title { font-size: 12.5px; color: #cbb87e; font-style: italic; }
+.portrait.targetable { border-color: #ffd97a; box-shadow: 0 0 0 3px rgba(255,217,122,.45); animation: pulse 1s infinite; }
+.side-stats { flex: 1; }
+.life { position: relative; height: 22px; background: #3a1414; border: 1px solid #6b5a2e; border-radius: 11px; overflow: hidden; margin-bottom: 4px; }
+.life-fill { height: 100%; background: linear-gradient(#7ee787, #2e9e4f); transition: width .35s ease; }
+.life.warn .life-fill { background: linear-gradient(#ffd97a, #e8a83c); }
+.life.low .life-fill { background: linear-gradient(#ff8a7a, #c0392b); }
+.life-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: bold; text-shadow: 0 1px 2px #000; }
+.ember { font-size: 15px; color: #ffb347; letter-spacing: 1px; }
+.ember .pip { color: #5a4a28; margin-right: 2px; }
+.ember .pip.on { color: #ffb347; text-shadow: 0 0 6px #ff8c00; }
+.pile-counts { font-size: 13px; color: #a99e7c; margin-top: 3px; }
+.foe-hand { display: flex; gap: 4px; flex: none; }
+.foe-hand .card { width: 34px; height: 48px; }
+
+/* ---------- fields ---------- */
+.field-row { display: flex; gap: 10px; justify-content: center; padding: 3px 0; }
+.field-slot { width: 116px; height: 144px; }
+.field-slot.empty { border: 2px dashed rgba(255,255,255,.16); border-radius: 12px; }
+.field-slot .card { width: 116px; height: 144px; }
+
+/* ---------- cards ---------- */
+.card {
+  position: relative; width: 116px; height: 144px; flex: none;
+  background: linear-gradient(#fdf6e3, #f0dfb8); color: #2b2118;
+  border: 2px solid #8a6d2f; border-radius: 12px; padding: 6px 7px 4px;
+  box-shadow: 0 3px 8px rgba(0,0,0,.5); user-select: none;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.card .cost {
+  position: absolute; top: -8px; left: -8px; width: 30px; height: 30px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffb347, #e07b00); color: #fff; font-weight: bold;
+  display: flex; align-items: center; justify-content: center; font-size: 17px;
+  border: 2px solid #fff0c0; box-shadow: 0 2px 5px rgba(0,0,0,.5);
+}
+.card .element { font-size: 13px; font-weight: bold; text-align: right; }
+.card .element span { margin-left: 3px; }
+.card-name { font-size: 13.5px; font-weight: bold; text-align: center; margin-top: 1px; min-height: 28px; }
+.card .art { font-size: 32px; text-align: center; line-height: 1; text-shadow: 0 2px 0 rgba(0,0,0,.12); }
+.card-text { font-size: 11px; line-height: 1.25; text-align: center; color: #5a4a28; font-style: italic; min-height: 24px; }
+.card .stats { display: flex; justify-content: space-between; font-weight: bold; font-size: 15px; margin-top: 4px; border-top: 1px solid #cbb87e; padding-top: 4px; }
+.card .power { color: #b02a1e; }
+.card .guard { color: #1d5fa8; }
+.card .spell-tag { justify-content: center; color: #7a4fd0; letter-spacing: 2px; }
+.card.spell { background: linear-gradient(#f3e8ff, #e2ccf7); }
+.card.el-flame { border-color: #c0392b; }
+.card.el-tide { border-color: #1d5fa8; }
+.card.el-stone { border-color: #7a5220; }
+.card.el-gale { border-color: #1d7a37; }
+.card.back { background: repeating-linear-gradient(45deg, #5a2d1e, #5a2d1e 8px, #7a3d24 8px, #7a3d24 16px); border-color: #e8b64c; display: flex; align-items: center; justify-content: center; }
+.card.back .back-glyph { font-size: 22px; color: #ffd97a; font-weight: bold; }
+.hand { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; padding: 4px 0 0; min-height: 152px; }
+.hand .card { cursor: pointer; }
+.hand .card:hover { transform: translateY(-10px); }
+.hand .card.playable { box-shadow: 0 0 0 3px rgba(255,217,122,.85), 0 6px 14px rgba(0,0,0,.5); }
+.hand .card.unplayable { opacity: .55; filter: grayscale(.5); }
+.hand .card.selected { transform: translateY(-16px); box-shadow: 0 0 0 4px #ffd97a, 0 10px 20px rgba(0,0,0,.6); }
+.field-slot .card.targetable { box-shadow: 0 0 0 4px #ff6b6b, 0 0 18px rgba(255,80,80,.7); animation: pulse 1s infinite; cursor: pointer; }
+.card.fresh { animation: pop .3s ease; }
+@keyframes pop { 0% { transform: scale(.7) translateY(14px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+
+/* ---------- middle bar, hints ---------- */
+.midbar { display: flex; align-items: center; gap: 16px; padding: 5px 4px; border-top: 1px solid rgba(255,255,255,.12); border-bottom: 1px solid rgba(255,255,255,.12); }
+.log { flex: 1; font-size: 13px; color: #d8cba6; line-height: 1.4; min-height: 46px; }
+.log div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.end-btn { padding: 10px 26px; font-size: 18px; flex: none; }
+.hint { text-align: center; font-size: 14px; color: #ffe9a8; padding-top: 5px; min-height: 22px; }
+.cycle { text-align: center; font-size: 12.5px; color: #a99e7c; padding-top: 4px; }
+
+/* Narrow windows: shrink the table instead of spilling off the sides. */
+@media (max-width: 760px) {
+  h1 { font-size: 42px; }
+  .field-slot, .field-slot .card { width: 104px; height: 148px; }
+  .card { width: 104px; height: 148px; }
+  .card .art { font-size: 34px; }
+  .portrait { width: 118px; }
+  .foe-hand .card { width: 26px; height: 38px; }
+}
